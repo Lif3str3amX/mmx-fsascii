@@ -1,0 +1,12 @@
+<!-- http://stackoverflow.com/questions/15934553/how-do-you-set-the-sort-order-for-event-observers-in-magento -->
+<config>
+    <modules>
+        <Mmx_Fsascii>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Mmx_Processor />
+            </depends>
+        </Mmx_Fsascii>
+    </modules>
+</config>

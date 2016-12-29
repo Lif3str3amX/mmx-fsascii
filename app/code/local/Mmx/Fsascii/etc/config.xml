@@ -1,0 +1,24 @@
+<config>
+    <modules>
+        <Mmx_Fsascii>
+            <version>0.1.0</version>
+        </Mmx_Fsascii>
+    </modules>
+    <global>
+        <blocks>
+            <mmx_fsascii>
+                <class>Mmx_Fsascii_Block</class>
+            </mmx_fsascii>
+        </blocks>
+        <models>
+            <mmx_fsascii>
+                <class>Mmx_Fsascii_Model</class>
+            </mmx_fsascii>
+        </models>
+        <helpers>
+            <mmx_fsascii>
+                <class>Mmx_Fsascii_Helper</class>
+            </mmx_fsascii>
+        </helpers>
+    </global>
+</config>

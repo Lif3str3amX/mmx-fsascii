@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <mmx>
+            <label>MMX</label>
+            <sort_order>999</sort_order>
+        </mmx>
+    </tabs>
+    <sections>
+        <mmx_fsascii>
+            <label>FS ASCII</label>
+            <tab>mmx</tab>
+            <sort_order>2</sort_order>
+            <show_in_default>1</show_in_default>
+            <groups>
+                <general>
+                    <label>Settings</label>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <fields>
+                        <output_dir>
+                            <label>Output files to</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>required-entry</validate>
+                            <comment><![CDATA[Write FS ASCII files to this folder]]></comment>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                        </output_dir>
+                    </fields>
+                </general>
+            </groups>
+        </mmx_fsascii>
+    </sections>
+</config>
