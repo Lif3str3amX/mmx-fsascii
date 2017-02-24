@@ -6,7 +6,6 @@
 
     <filter>
         <whitelist>
-            <directory suffix=".php">../Helper</directory>
             <directory suffix=".php">../Model</directory>
             <exclude>
                 <directory suffix=".xml">../etc</directory>
