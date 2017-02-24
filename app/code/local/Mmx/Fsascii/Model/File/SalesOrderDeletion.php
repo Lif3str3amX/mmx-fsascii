@@ -48,26 +48,19 @@ class Mmx_Fsascii_Model_File_SalesOrderDeletion extends Mmx_Fsascii_Model_File {
     }
 
     /**
-     * Order can be deleted as long as Sage order status is 4 and below, however, by the 
-     * time this function is called after the "order_cancel_after" event, the order status has already been set to canceled!
+     * DEL file can be created if order is cancelled via the BT or Indigo stores
+     * Confirmed by J.P on 24/Feb/2017
      * 
-     * Cancellation depending on order status will need to be validated in the UI instead.
-     *
      * @return boolean
      */
     public function isValid() {
 
-        $is_bt_store = false;
-        if ($this->order->getStoreId() == 2) { // BT
-            $is_bt_store = true;
+        $is_valid = false;
+        if ($this->order->getStoreId() == 2 || $this->order->getStoreId() == 3) { // BT or Indigo
+            $is_valid = true;
         }
-
-        if ($is_bt_store && $this->order->getStatus() == 'canceled') {
-            return true;
-        }
-        else {
-            return false;
-        }
+        
+        return $is_valid;
     }
 
 }
