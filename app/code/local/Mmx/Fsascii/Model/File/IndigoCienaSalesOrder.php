@@ -63,8 +63,9 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
         /* @var $orderItem Mage_Sales_Model_Order_Item */
         foreach ($this->order->getAllItems() as $orderItem) {
             
-            $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
-            if (strtoupper($product->getSku()) == 'INCIENABOM' || strtoupper($product->getSku()) == 'INBTRESERVATION') {
+            if ($this->isSerialisedItem($orderItem)) {
+                
+                $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
 
                 $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
                 $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
@@ -165,8 +166,9 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
         // Line by line breakdown showing products with serial numbers in this order
         foreach ($this->order->getAllItems() as $orderItem) {
 
-            $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
-            if (strtoupper($product->getSku()) == 'INCIENABOM' || strtoupper($product->getSku()) == 'INBTRESERVATION') {
+            if ($this->isSerialisedItem($orderItem)) {            
+
+                $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
 
                 $productOptions = $orderItem->getProductOptions();
                 foreach ($productOptions as $productOption) {

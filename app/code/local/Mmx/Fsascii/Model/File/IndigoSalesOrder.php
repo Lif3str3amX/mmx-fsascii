@@ -61,9 +61,10 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
         /* @var $orderItem Mage_Sales_Model_Order_Item */
         foreach ($this->order->getAllItems() as $orderItem) {
 
-            $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
-
-            if (strtoupper($product->getSku()) != 'INCIENABOM' && strtoupper($product->getSku()) != 'INBTRESERVATION') {    // these are to be displayed in IndigoCienaSalesOrder
+            if (!$this->isSerialisedItem($orderItem)) {
+                
+                $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
+                
                 $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
                 $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
                         ->setSequence(sprintf('%04d', $i))
@@ -207,7 +208,7 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
      * 
      * This Indigo Sales Order should only list standard Indigo products.
      * INCIENABOM/INBTRESERVATION are split into a separate order using the
-     * Mmx_Splitter extension
+     * Mmx_Processor extension
      * 
      * Returns true if order placed in Indigo store and contains some standard
      * Indigo products (not just INCIENABOM/INBTRESERVATION serialised products)
