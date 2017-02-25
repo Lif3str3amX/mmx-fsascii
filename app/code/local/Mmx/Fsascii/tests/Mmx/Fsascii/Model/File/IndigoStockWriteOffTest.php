@@ -16,7 +16,7 @@ class Mmx_Fsascii_Model_File_IndigoStockWriteOffTest extends PHPUnit_Framework_T
 
     public function setUp() {
         
-        $this->order = Mage::getModel('sales/order')->load(1045);
+        $this->order = Mage::getModel('sales/order')->load(1045);   // Indigo order
 
         $this->model = new Mmx_Fsascii_Model_File_IndigoStockWriteOff();
         $this->model->setOrder($this->order);
@@ -26,8 +26,8 @@ class Mmx_Fsascii_Model_File_IndigoStockWriteOffTest extends PHPUnit_Framework_T
         $this->assertEquals(1045, $this->model->getOrder()->getId());
     }
     
-    public function testDoesContainINBTRESERVATION() {
-        $this->assertTrue($this->model->isValid());
+    public function testShouldNotBeValidForIndigoStoreOrder() {
+        $this->assertFalse($this->model->isValid());
     }
     
     public function testGenerateFilename() {
