@@ -89,6 +89,21 @@ class Mmx_Fsascii_Model_ExporterTest extends PHPUnit_Framework_TestCase {
                  ->export();
         
     } 
+
+    public function testIndigoCienaSalesOrderExport() {
+        
+        $order = Mage::getModel('sales/order')->load(1349);
+        
+        $writer = new Mmx_Fsascii_Helper_FileWriter();
+        $writer->setOutputDir('/Users/gn/Sites/magento/magento-mmx/SageData/Out');
+        
+        $this->exporter = new Mmx_Fsascii_Model_Exporter();
+        $this->exporter->setOrder($order)
+                 ->addWriter($writer)
+                 ->addOutput(new Mmx_Fsascii_Model_File_IndigoCienaSalesOrder())
+                 ->export();
+        
+    } 
     
     public function testcancelOrderExport() {
         
