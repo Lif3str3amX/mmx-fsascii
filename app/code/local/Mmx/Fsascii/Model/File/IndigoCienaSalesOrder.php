@@ -28,7 +28,7 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
                 ->setDateEntered($date)
                 ->setDateReceived($date)
                 ->setDateRequired($date)
-                ->setOrderStatus(5)
+                ->setOrderStatus(4)
                 ->setCtolnolines($this->getSalesOrderDetailsLineCount());
         
         return $line;
@@ -201,6 +201,54 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
     }
 
     /**
+     * 
+     * @return string
+     */    
+    public function _getSalesOrderAllocations() {
+        
+        $lines = array();
+        
+        $i = 1;
+        // Line by line breakdown showing products with serial numbers in this order
+        foreach ($this->order->getAllItems() as $orderItem) {
+
+            if ($this->isSerialisedItem($orderItem)) {
+
+                $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
+
+                $productOptions = $orderItem->getProductOptions();
+                foreach ($productOptions as $productOption) {
+                    foreach ($productOption as $option) {
+                        if (isset($option['label'])) {
+                            if ($option['label'] == 'Serial Code') {
+                                $serials = $option['value'];
+                                $arrSerials = explode(',', $serials);
+
+                                foreach ($arrSerials as $serial) {
+
+                                    $line = new Mmx_Fsascii_Model_Format_SalesOrderAllocation();
+                                    $line->setSalesOrder(sprintf('="%s"', $this->order->getIncrementId()))
+                                            ->setWarehouse(sprintf('%04d', $i))
+                                            ->setProduct(strtoupper($product->getSku()))
+                                            ->setSerialNumber(trim($serial))
+                                            ->setAllocationType('H')
+                                            ->setAllocatedQty(1);
+
+                                    $lines[] = $line;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                $i++;
+            }
+        }
+
+        return implode(PHP_EOL, $lines);
+    }
+    
+    /**
      * Generates a filename based on order date and time
      * 
      * @return string
@@ -219,6 +267,7 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
         $lines[] = $this->_getRunControlRecord();
         $lines[] = $this->_getSalesOrderHeader();
         $lines[] = $this->_getSalesOrderDetails();
+        $lines[] = $this->_getSalesOrderAllocations();
 
         $ascii = implode(PHP_EOL, $lines);
         return $ascii;
@@ -239,6 +288,5 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
 
         return $is_indigo_store;
     }    
-    
     
 }
