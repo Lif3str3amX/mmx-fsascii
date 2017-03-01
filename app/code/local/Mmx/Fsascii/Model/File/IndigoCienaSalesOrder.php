@@ -227,8 +227,9 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
                                 foreach ($arrSerials as $serial) {
 
                                     $line = new Mmx_Fsascii_Model_Format_SalesOrderAllocation();
-                                    $line->setSalesOrder(sprintf('="%s"', $this->order->getIncrementId()))
-                                            ->setWarehouse(sprintf('%04d', $i))
+                                    $line->setSalesOrder(sprintf('"%s"', $this->order->getIncrementId()))
+                                            ->setSalesOrderLineNumber(sprintf('%04d', $i))
+                                            ->setWarehouse(11)
                                             ->setProduct(strtoupper($product->getSku()))
                                             ->setSerialNumber(trim($serial))
                                             ->setAllocationType('H')
