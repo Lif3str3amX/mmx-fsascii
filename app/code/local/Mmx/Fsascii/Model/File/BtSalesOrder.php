@@ -115,7 +115,7 @@ class Mmx_Fsascii_Model_File_BtSalesOrder extends Mmx_Fsascii_Model_File {
 
         $increment_id = $this->order->getIncrementId();
 
-        $filename = sprintf('BT %s.txt', $increment_id);
+        $filename = sprintf('SOA %s.txt', $increment_id);
         return $filename;
     }
 

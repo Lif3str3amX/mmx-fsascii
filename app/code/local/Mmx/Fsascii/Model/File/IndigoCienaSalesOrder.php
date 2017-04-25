@@ -250,15 +250,15 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
     }
     
     /**
-     * Generates a filename based on order date and time
-     * 
+     * Generates a filename based on store and increment_id
+     *
      * @return string
      */
     public function generateFilename() {
 
-        $datetime = date('dmyHi', strtotime($this->order->getCreatedAt()));
-        
-        $filename = sprintf('Ciena %s.txt', $datetime);
+        $increment_id = $this->order->getIncrementId();
+
+        $filename = sprintf('SOA %s.txt', $increment_id);
         return $filename;
     }
 

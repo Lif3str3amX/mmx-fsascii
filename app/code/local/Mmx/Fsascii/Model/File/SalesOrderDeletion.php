@@ -29,7 +29,7 @@ class Mmx_Fsascii_Model_File_SalesOrderDeletion extends Mmx_Fsascii_Model_File {
 
         $increment_id = $this->order->getIncrementId();
 
-        $filename = sprintf('DEL_SO %s.txt', $increment_id);
+        $filename = sprintf('SOD %s.txt', $increment_id);
         return $filename;
     }
 
