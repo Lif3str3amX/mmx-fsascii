@@ -36,7 +36,7 @@ class Mmx_Fsascii_Model_File_BtSalesOrderTest extends PHPUnit_Framework_TestCase
     }
     
     public function testGenerateFilename() {
-        $this->assertEquals('BT B001085.txt', $this->model->generateFilename());
+        $this->assertEquals('SOA B001085.txt', $this->model->generateFilename());
     }
 
 }

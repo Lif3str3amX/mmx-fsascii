@@ -30,7 +30,7 @@ class Mmx_Fsascii_Model_File_SalesOrderDeletionTest extends PHPUnit_Framework_Te
     }
     
     public function testGenerateFilename() {
-        $this->assertEquals('DEL_SO B001085.txt', $this->model->generateFilename());
+        $this->assertEquals('SOD B001085.txt', $this->model->generateFilename());
     }
     
     public function testShouldBeValidForBtStoreOrder() {

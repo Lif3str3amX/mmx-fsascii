@@ -36,7 +36,7 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrderTest extends PHPUnit_Framework_Test
     }
     
     public function testGenerateFilename() {
-        $this->assertEquals('I001094.txt', $this->model->generateFilename());
+        $this->assertEquals('SOA I001094.txt', $this->model->generateFilename());
     }
 
 }
