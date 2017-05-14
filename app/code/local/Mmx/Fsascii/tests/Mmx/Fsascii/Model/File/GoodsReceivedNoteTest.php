@@ -39,7 +39,7 @@ class Mmx_Fsascii_Model_File_GoodsReceivedNoteTest extends PHPUnit_Framework_Tes
     }
 
     public function testGenerateFilename() {
-        $this->assertEquals('SCHREF001.txt', $this->model->generateFilename());
+        $this->assertEquals('GRN 0211161824.txt', $this->model->generateFilename());    // 1036 created_at = 2016-11-02 18:24:23
     }
 
 }

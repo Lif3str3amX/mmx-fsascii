@@ -34,17 +34,14 @@ class Mmx_Fsascii_Model_File_GoodsReceivedNote extends Mmx_Fsascii_Model_File {
     }
 
     /**
-     * Generates a filename based on the scheme reference
+     * Generates a filename based on order create date
      * 
      * @return string
      */
     public function generateFilename() {
 
-        // Get custom order attrs for this order
-        $amorderattr = Mage::getModel('amorderattr/attribute')->load($this->order->getId(), 'order_id');
-
-        $schemeref = preg_replace('/[^a-zA-Z0-9_-]/', '_', $amorderattr->getSchemeref());
-        $filename = sprintf('%s.txt', $schemeref);
+        $datetime = date('dmyHi', strtotime($this->order->getCreatedAt())); // e.g. 2016-11-02 18:24:23 -> 0211161824
+        $filename = sprintf('GRN %s.txt', $datetime);
 
         return $filename;
     }
