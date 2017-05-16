@@ -29,7 +29,7 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
                 ->setDateReceived($date)
                 ->setDateRequired($date)
                 ->setOrderStatus(5)
-                ->setCtolnolines($this->getSalesOrderDetailsLineCount());
+                ->setCtolnolines($this->getSalesOrderDetailsLineCount() + $this->getSalesOrderAllocationLineCount());
 
         return $line;
     }
@@ -45,6 +45,15 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
 
     /**
      *
+     * @return string
+     */
+    public function _getSalesOrderAllocations() {
+        $lines = $this->_getSalesOrderAllocationCollection();
+        return implode(PHP_EOL, $lines);
+    }
+    
+    /**
+     *
      * @return int
      */
     public function getSalesOrderDetailsLineCount() {
@@ -53,18 +62,57 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
 
     /**
      *
+     * @return int
+     */
+    public function getSalesOrderAllocationLineCount() {
+        return count($this->_getSalesOrderAllocationCollection());
+    }
+    
+    /**
+     *
      * @return Mmx_Fsascii_Model_Format_SalesOrderDetail[]
      */
     public function _getSalesOrderDetailCollection() {
 
         $i = 1;
+        
         /* @var $orderItem Mage_Sales_Model_Order_Item */
         foreach ($this->order->getAllItems() as $orderItem) {
 
-            if (!$this->isSerialisedItem($orderItem)) {
+            $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
+
+            // If serialised, create a line for each serial number, else if not serialised, one line only
+            if ($this->isSerialisedItem($orderItem)) {
+
+                $productOptions = $orderItem->getProductOptions();
+                foreach ($productOptions as $productOption) {
+                    foreach ($productOption as $option) {
+                        if (isset($option['label'])) {
+                            if ($option['label'] == 'Serial Code') {
+                                $serials = $option['value'];
+                                $arrSerials = explode(',', $serials);
+
+                                foreach ($arrSerials as $serial) {
+
+                                    $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
+                                    $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
+                                            ->setSequence(sprintf('%04d', $i))
+                                            ->setProduct(strtoupper($product->getSku()))
+                                            ->setType('P')
+                                            ->setWarehouse(11)
+                                            ->setQty(1)
+                                            ->setAllocatedQty(0);
+                                    $lines[] = $line;
+                                    $i++;
+                                }
+                            }
+                        }
+                    }
+                }
                 
-                $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
-                
+            }
+            else {
+
                 $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
                 $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
                         ->setSequence(sprintf('%04d', $i))
@@ -146,6 +194,8 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
         $i++;
         
         // Add Ciena Sales Order Number (would have been optionally created by Mmx Splitter if this order contains serialised products)
+        // Defunct, no more order splitting
+        /*
         $ciena_increment_id = $amorderattr->getCienaIncrementId();
         if ($ciena_increment_id) {
             $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
@@ -157,7 +207,8 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
             $lines[] = $line;
             $i++;
         }
-
+        */
+        
         // Add BT Sales Order Number (if found by Mmx Updater)
         $bt_increment_id = $amorderattr->getBtIncrementId();
         if ($bt_increment_id) {
@@ -170,10 +221,107 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
             $lines[] = $line;
             $i++;
         }
-        
+
+        // Line by line breakdown of serialised items showing products with serial numbers in this order
+        foreach ($this->order->getAllItems() as $orderItem) {
+
+            if ($this->isSerialisedItem($orderItem)) {            
+
+                $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
+
+                $productOptions = $orderItem->getProductOptions();
+                foreach ($productOptions as $productOption) {
+                    foreach ($productOption as $option) {
+                        if (isset($option['label'])) {
+                            if ($option['label'] == 'Serial Code') {
+                                $serials = $option['value'];
+                                $arrSerials = explode(',', $serials);
+
+                                foreach ($arrSerials as $serial) {
+
+                                    $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
+                                    $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
+                                            ->setSequence(sprintf('%04d', $i))
+                                            ->setType('C')
+                                            ->setWarehouse('d')
+                                            ->setLongDescription(sprintf('"%s %s"', strtoupper($product->getSku()), trim($serial)));
+
+                                    $lines[] = $line;
+                                    $i++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return $lines;
     }
 
+    /**
+     * 
+     * @return string
+     */    
+    public function _getSalesOrderAllocationCollection() {
+        
+        $lines = array();
+        
+        $i = 1;
+        // Line by line breakdown showing hard/soft allocations
+        foreach ($this->order->getAllItems() as $orderItem) {
+
+            $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
+
+            // Products with serial numbers in this order
+            if ($this->isSerialisedItem($orderItem)) {
+
+                $productOptions = $orderItem->getProductOptions();
+                foreach ($productOptions as $productOption) {
+                    foreach ($productOption as $option) {
+                        if (isset($option['label'])) {
+                            if ($option['label'] == 'Serial Code') {
+                                $serials = $option['value'];
+                                $arrSerials = explode(',', $serials);
+
+                                foreach ($arrSerials as $serial) {
+
+                                    $line = new Mmx_Fsascii_Model_Format_SalesOrderAllocation();
+                                    $line->setSalesOrder(sprintf('"%s"', $this->order->getIncrementId()))
+                                            ->setSalesOrderLineNumber(sprintf('%04d', $i))
+                                            ->setWarehouse(11)
+                                            ->setProduct(strtoupper($product->getSku()))
+                                            ->setSerialNumber(trim($serial))
+                                            ->setAllocationType('H')
+                                            ->setAllocatedQty(1);
+
+                                    $lines[] = $line;
+                                    $i++;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            }
+            else {
+                // Non-serialised products
+                $line = new Mmx_Fsascii_Model_Format_SalesOrderAllocation();
+                $line->setSalesOrder(sprintf('"%s"', $this->order->getIncrementId()))
+                        ->setSalesOrderLineNumber(sprintf('%04d', $i))
+                        ->setWarehouse(11)
+                        ->setProduct(strtoupper($product->getSku()))
+                        ->setAllocationType('S')
+                        ->setAllocatedQty(number_format($orderItem->getQtyOrdered()));
+
+                $lines[] = $line;
+                $i++;                
+            }
+        }
+
+        return $lines;
+    }    
+    
     /**
      * Generates a filename based on store and increment_id
      *
@@ -197,6 +345,7 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
         $lines[] = $this->_getRunControlRecord();
         $lines[] = $this->_getSalesOrderHeader();
         $lines[] = $this->_getSalesOrderDetails();
+        $lines[] = $this->_getSalesOrderAllocations();
 
         $ascii = implode(PHP_EOL, $lines);
         return $ascii;
