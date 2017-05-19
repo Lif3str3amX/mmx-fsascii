@@ -29,7 +29,7 @@ class Mmx_Fsascii_Model_File_IndigoSalesOrder extends Mmx_Fsascii_Model_File {
                 ->setDateReceived($date)
                 ->setDateRequired($date)
                 ->setOrderStatus(5)
-                ->setCtolnolines($this->getSalesOrderDetailsLineCount() + $this->getSalesOrderAllocationLineCount());
+                ->setCtolnolines($this->getSalesOrderDetailsLineCount());
 
         return $line;
     }
