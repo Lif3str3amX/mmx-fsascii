@@ -2,6 +2,8 @@
 
 class Mmx_Fsascii_Model_File {
 
+    const MMX_FSASCII_MODEL_FILE_EOL = "\r\n";
+    
     /**
      * @var Mage_Sales_Model_Order
      */

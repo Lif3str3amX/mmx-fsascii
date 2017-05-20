@@ -40,7 +40,7 @@ class Mmx_Fsascii_Model_File_BtSalesOrder extends Mmx_Fsascii_Model_File {
      */
     public function _getSalesOrderDetails() {
         $lines = $this->_getSalesOrderDetailCollection();
-        return implode(PHP_EOL, $lines);
+        return implode(self::MMX_FSASCII_MODEL_FILE_EOL, $lines);
     }
 
     /**
@@ -126,7 +126,7 @@ class Mmx_Fsascii_Model_File_BtSalesOrder extends Mmx_Fsascii_Model_File {
         $lines[] = $this->_getSalesOrderHeader();
         $lines[] = $this->_getSalesOrderDetails();
 
-        $ascii = implode(PHP_EOL, $lines);
+        $ascii = implode(self::MMX_FSASCII_MODEL_FILE_EOL, $lines);
         return $ascii;
     }
     

@@ -40,7 +40,7 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
      */
     public function _getSalesOrderDetails() {
         $lines = $this->_getSalesOrderDetailCollection();
-        return implode(PHP_EOL, $lines);
+        return implode(self::MMX_FSASCII_MODEL_FILE_EOL, $lines);
     }
 
     /**
@@ -246,7 +246,7 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
             }
         }
 
-        return implode(PHP_EOL, $lines);
+        return implode(self::MMX_FSASCII_MODEL_FILE_EOL, $lines);
     }
     
     /**
@@ -270,7 +270,7 @@ class Mmx_Fsascii_Model_File_IndigoCienaSalesOrder extends Mmx_Fsascii_Model_Fil
         $lines[] = $this->_getSalesOrderDetails();
         $lines[] = $this->_getSalesOrderAllocations();
 
-        $ascii = implode(PHP_EOL, $lines);
+        $ascii = implode(self::MMX_FSASCII_MODEL_FILE_EOL, $lines);
         return $ascii;
     }
 

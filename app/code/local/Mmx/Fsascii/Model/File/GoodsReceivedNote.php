@@ -52,7 +52,7 @@ class Mmx_Fsascii_Model_File_GoodsReceivedNote extends Mmx_Fsascii_Model_File {
         $lines[] = $this->_getRunControlRecord();
         $lines[] = $this->_getGoodsReceivedNote();
 
-        $ascii = implode(PHP_EOL, $lines);
+        $ascii = implode(self::MMX_FSASCII_MODEL_FILE_EOL, $lines);
         return $ascii;
     }
     
