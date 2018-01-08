@@ -73,13 +73,60 @@ class Mmx_Fsascii_Model_File_HuaweiSalesOrder extends Mmx_Fsascii_Model_File {
             $product = Mage::getModel('catalog/product')->load($orderItem->getProductId());
 
             $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
-            $line->setSalesorder(sprintf('"%s"', $this->order->getIncrementId()))
+            $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
                 ->setSequence(sprintf('%04d', $i))
                 ->setProduct($product->getSku())
                 ->setType('P')
                 ->setWarehouse(11)
                 ->setQty(number_format($orderItem->getQtyOrdered()))
                 ->setAllocatedQty(0);
+            $lines[] = $line;
+            $i++;
+        }
+
+        // Get custom order attrs for this order
+        $amorderattr = Mage::getModel('amorderattr/attribute')->load($this->order->getId(), 'order_id');
+
+        // Add Shipping
+        $heshipping = $amorderattr->getHeshipping();
+        switch ($heshipping) {
+            case 32:
+                $_heshipping = 'Standard';
+                break;
+            case 31:
+                $_heshipping = '9:00';
+                break;
+            case 30:
+                $_heshipping = '10:00';
+                break;
+            case 29:
+                $_heshipping = '12:00';
+                break;
+            case 28:
+                $_heshipping = 'Saturday Delivery';
+                break;
+        }
+        $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
+        $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
+            ->setSequence(sprintf('%04d', $i))
+            ->setType('C')
+            ->setWarehouse('d')
+            ->setLongDescription(sprintf('"Shipping %s"', $_heshipping));
+        $lines[] = $line;
+        $i++;
+
+        // Add Comments
+        $hw_comments = $amorderattr->getHwComments();
+        if ($hw_comments) {
+            $_hw_comments = Mmx_Fsascii_Helper_Data::sanitize($hw_comments);
+            $_hw_comments = substr($_hw_comments, 0, 40); // 40 max
+
+            $line = new Mmx_Fsascii_Model_Format_SalesOrderDetail();
+            $line->setSalesorder(sprintf('="%s"', $this->order->getIncrementId()))
+                ->setSequence(sprintf('%04d', $i))
+                ->setType('C')
+                ->setWarehouse('d')
+                ->setLongDescription(sprintf('"Comments %s"', $_hw_comments));
             $lines[] = $line;
             $i++;
         }
