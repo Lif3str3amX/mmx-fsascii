@@ -50,13 +50,15 @@ class Mmx_Fsascii_Model_File_SalesOrderDeletion extends Mmx_Fsascii_Model_File {
     /**
      * DEL file can be created if order is cancelled via the BT or Indigo stores
      * Confirmed by J.P on 24/Feb/2017
-     * 
+     * DEL file can be created if order is cancelled via the Huawei store
+     * Requested by J.P on 05/Jan/2018
+     *
      * @return boolean
      */
     public function isValid() {
 
         $is_valid = false;
-        if ($this->order->getStoreId() == 2 || $this->order->getStoreId() == 3) { // BT or Indigo
+        if ($this->order->getStoreId() == 2 || $this->order->getStoreId() == 3 || $this->order->getStoreId() == 5) { // BT or Indigo or Huawei
             $is_valid = true;
         }
         
